@@ -834,42 +834,53 @@ st.markdown("""
 
 
 # --- History Functions ---
+def _init_session_history():
+    if "history" not in st.session_state:
+        if os.path.exists(HISTORY_FILE):
+            try:
+                with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+                    st.session_state["history"] = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                st.session_state["history"] = []
+        else:
+            st.session_state["history"] = []
+
+def _save_history_to_file():
+    try:
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(st.session_state["history"], f, ensure_ascii=False, indent=2)
+    except IOError:
+        pass
+
 def load_history():
-    if os.path.exists(HISTORY_FILE):
-        try:
-            with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except (json.JSONDecodeError, IOError):
-            return []
-    return []
+    _init_session_history()
+    return st.session_state["history"]
 
 
 def save_to_history(niche, data):
-    history = load_history()
+    _init_session_history()
     entry = {
-        "id": len(history) + 1,
+        "id": len(st.session_state["history"]) + 1,
         "niche": niche,
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "data": data,
     }
-    history.insert(0, entry)
-    history = history[:50]
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, ensure_ascii=False, indent=2)
+    st.session_state["history"].insert(0, entry)
+    st.session_state["history"] = st.session_state["history"][:50]
+    _save_history_to_file()
     return entry
 
 
 def delete_history_item(idx):
-    history = load_history()
-    if 0 <= idx < len(history):
-        history.pop(idx)
-        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(history, f, ensure_ascii=False, indent=2)
+    _init_session_history()
+    if 0 <= idx < len(st.session_state["history"]):
+        st.session_state["history"].pop(idx)
+        _save_history_to_file()
 
 
 def clear_all_history():
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump([], f)
+    st.session_state["history"] = []
+    _save_history_to_file()
 
 
 # --- API Call ---

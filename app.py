@@ -375,12 +375,16 @@ st.markdown("""
 
     .m-card.blue { border-left: 4px solid #3b82f6; }
     .m-card.blue .m-card-value { color: #2563eb; }
+    .m-card.blue .m-card-label { color: #2563eb; }
     .m-card.green { border-left: 4px solid #22c55e; }
     .m-card.green .m-card-value { color: #16a34a; }
+    .m-card.green .m-card-label { color: #16a34a; }
     .m-card.red { border-left: 4px solid #f97316; }
     .m-card.red .m-card-value { color: #ea580c; }
+    .m-card.red .m-card-label { color: #ea580c; }
     .m-card.purple { border-left: 4px solid #8b5cf6; }
     .m-card.purple .m-card-value { color: #7c3aed; }
+    .m-card.purple .m-card-label { color: #7c3aed; }
 
     /* ===== TABS ===== */
     .stTabs [data-baseweb="tab-list"] {
@@ -399,6 +403,10 @@ st.markdown("""
         color: #64748b !important;
         font-family: 'Plus Jakarta Sans', sans-serif !important;
         transition: all 0.2s ease;
+    }
+    .stTabs [data-baseweb="tab"] p {
+        font-size: 1.06rem !important;
+        margin: 0 !important;
     }
     .stTabs [data-baseweb="tab"][aria-selected="true"] {
         background: #6366f1 !important;
@@ -701,19 +709,25 @@ st.markdown("""
     }
     .comp-list-count {
         font-size: 0.8rem;
-        background: #e0e7ff;
-        color: #4338ca;
-        padding: 4px 14px;
-        border-radius: 20px;
+        background: #e0e7ff !important;
+        color: #4338ca !important;
+        padding: 4px 14px !important;
+        border-radius: 20px !important;
         font-weight: 700;
+        display: inline-block;
     }
     .comp-list-zero {
         font-size: 0.8rem;
-        background: #fef2f2;
-        color: #dc2626;
-        padding: 4px 14px;
-        border-radius: 20px;
+        background: #fef2f2 !important;
+        color: #dc2626 !important;
+        padding: 4px 14px !important;
+        border-radius: 20px !important;
         font-weight: 700;
+        display: inline-block;
+    }
+    .comp-list-count.shorts-count {
+        background: #fecaca !important;
+        color: #dc2626 !important;
     }
     .comp-list-links {
         display: flex;
@@ -994,23 +1008,19 @@ def render_results(data):
                     <div class="comp-group-body">
                 """
 
-                # Render header
-                st.markdown(header_html, unsafe_allow_html=True)
-
+                # Build all HTML together
+                comp_html = header_html
                 if blogs:
-                    blogs_html = ""
                     for blog in blogs:
                         b_title = blog.get("title", "No title")
                         b_url = blog.get("url", "#")
                         b_snippet = blog.get("snippet", "")
                         b_date = blog.get("date", "")
-                        blogs_html += f"""<div class="blog-card"><div class="blog-card-title"><a href="{b_url}" target="_blank">{b_title}</a></div><div class="blog-card-snippet">{b_snippet}</div><div class="blog-card-date">{b_date}</div></div>"""
-                    st.markdown(blogs_html, unsafe_allow_html=True)
+                        comp_html += f"""<div class="blog-card"><div class="blog-card-title"><a href="{b_url}" target="_blank">{b_title}</a></div><div class="blog-card-snippet">{b_snippet}</div><div class="blog-card-date">{b_date}</div></div>"""
                 else:
-                    st.markdown('<div class="comp-list-empty">No blog posts found in the last 30 days</div>', unsafe_allow_html=True)
-
-                # Close wrapper
-                st.markdown("</div></div>", unsafe_allow_html=True)
+                    comp_html += '<div class="comp-list-empty">No blog posts found in the last 30 days</div>'
+                comp_html += "</div></div>"
+                st.markdown(comp_html, unsafe_allow_html=True)
         else:
             st.info("No competitor data available.")
 
@@ -1037,17 +1047,15 @@ def render_results(data):
                             <div class="comp-list-avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626);">{initial}</div>
                             <div>
                                 <div class="comp-list-name">{name}</div>
-                                <span class="comp-list-count" style="background:#fef2f2;color:#dc2626;">{len(shorts)} shorts</span>
+                                <span class="comp-list-count shorts-count">{len(shorts)} shorts</span>
                             </div>
                         </div>
                     </div>
                     <div class="comp-group-body">
                 """
 
-                # Render header
-                st.markdown(header_html, unsafe_allow_html=True)
-
-                # Render each short individually
+                # Build all shorts HTML together
+                shorts_html = header_html
                 for s in shorts:
                     s_title = s.get("title", "No title")
                     s_url = s.get("url", "#")
@@ -1055,10 +1063,9 @@ def render_results(data):
                     s_date = s.get("date", "")
                     topic_html = f'<div class="short-card-topic">{s_topic}</div>' if s_topic else ''
                     date_html = f'<div class="short-card-date">{s_date}</div>' if s_date else ''
-                    st.markdown(f"""<div class="short-card"><div class="short-card-title"><a href="{s_url}" target="_blank">{s_title}</a></div>{topic_html}{date_html}</div>""", unsafe_allow_html=True)
-
-                # Close wrapper
-                st.markdown("</div></div>", unsafe_allow_html=True)
+                    shorts_html += f"""<div class="short-card"><div class="short-card-title"><a href="{s_url}" target="_blank">{s_title}</a></div>{topic_html}{date_html}</div>"""
+                shorts_html += "</div></div>"
+                st.markdown(shorts_html, unsafe_allow_html=True)
 
         if not has_shorts:
             st.info("No YouTube Shorts found for any competitor.")

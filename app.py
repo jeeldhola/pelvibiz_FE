@@ -285,7 +285,10 @@ st.markdown("""
     }
 
     /* Main Analyze Button - same height as input */
-    .main .stButton > button {
+    .main .stButton > button,
+    [data-testid="stMainBlockContainer"] .stButton > button,
+    .main .stButton > button[kind="secondary"],
+    .main .stButton > button[kind="primary"] {
         background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
         color: white !important;
         border: none !important;
@@ -301,7 +304,8 @@ st.markdown("""
         letter-spacing: 0.3px;
         cursor: pointer;
     }
-    .main .stButton > button:hover {
+    .main .stButton > button:hover,
+    [data-testid="stMainBlockContainer"] .stButton > button:hover {
         transform: translateY(-2px) !important;
         box-shadow: 0 8px 28px rgba(99,102,241,0.45) !important;
     }

@@ -42,7 +42,12 @@ st.markdown("""
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     /* ===== HIDE DEFAULTS ===== */
-    #MainMenu, footer, .stDeployButton, header[data-testid="stHeader"] { display: none !important; }
+    #MainMenu, footer, .stDeployButton { display: none !important; }
+    header[data-testid="stHeader"] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
 
     /* ===== SIDEBAR ===== */
     section[data-testid="stSidebar"] {

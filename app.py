@@ -998,12 +998,14 @@ def render_results(data):
                 st.markdown(header_html, unsafe_allow_html=True)
 
                 if blogs:
+                    blogs_html = ""
                     for blog in blogs:
                         b_title = blog.get("title", "No title")
                         b_url = blog.get("url", "#")
                         b_snippet = blog.get("snippet", "")
                         b_date = blog.get("date", "")
-                        st.markdown(f"""<div class="blog-card"><div class="blog-card-title"><a href="{b_url}" target="_blank">{b_title}</a></div><div class="blog-card-snippet">{b_snippet}</div><div class="blog-card-date">{b_date}</div></div>""", unsafe_allow_html=True)
+                        blogs_html += f"""<div class="blog-card"><div class="blog-card-title"><a href="{b_url}" target="_blank">{b_title}</a></div><div class="blog-card-snippet">{b_snippet}</div><div class="blog-card-date">{b_date}</div></div>"""
+                    st.markdown(blogs_html, unsafe_allow_html=True)
                 else:
                     st.markdown('<div class="comp-list-empty">No blog posts found in the last 30 days</div>', unsafe_allow_html=True)
 
